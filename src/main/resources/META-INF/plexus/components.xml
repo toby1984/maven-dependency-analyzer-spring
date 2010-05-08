@@ -1,0 +1,32 @@
+<component-set>
+  <components>
+<!--
+    <component>
+      <role>org.apache.maven.shared.dependency.analyzer.DependencyAnalyzer</role>
+      <implementation>org.apache.maven.shared.dependency.analyzer.asm.ASMDependencyAnalyzer</implementation>
+      <description>ASMDependencyAnalyzer</description>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.dependency.analyzer.ClassAnalyzer</role>
+      <implementation>org.apache.maven.shared.dependency.analyzer.DefaultClassAnalyzer</implementation>
+      <description></description>
+    </component>
+-->
+    <component>
+      <role>org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer</role>
+      <role-hint>spring</role-hint>
+      <implementation>org.apache.maven.shared.dependency.analyzer.MavenSpringProjectDependencyAnalyzer</implementation>
+      <description></description>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.dependency.analyzer.ClassAnalyzer</role>
+          <field-name>classAnalyzer</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.dependency.analyzer.DependencyAnalyzer</role>
+          <field-name>dependencyAnalyzer</field-name>
+        </requirement>
+      </requirements>
+    </component>
+  </components>
+</component-set>

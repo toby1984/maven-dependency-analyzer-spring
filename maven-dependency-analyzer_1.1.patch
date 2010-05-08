@@ -1,0 +1,53 @@
+Index: src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java
+===================================================================
+--- src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java	(revision 942371)
++++ src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java	(working copy)
+@@ -38,7 +38,7 @@
+  * 
+  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
+  * @version $Id$
+- * @plexus.component role="org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer"
++ * @plexus.component role="org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer" role-hint="default"
+  */
+ public class DefaultProjectDependencyAnalyzer
+     implements ProjectDependencyAnalyzer
+@@ -71,7 +71,7 @@
+         {
+             Map artifactClassMap = buildArtifactClassMap( project );
+ 
+-            Set dependencyClasses = buildDependencyClasses( project );
++            Set dependencyClasses = buildDependencyClasses( project , artifactClassMap );
+ 
+             Set declaredArtifacts = buildDeclaredArtifacts( project );
+             
+@@ -159,7 +159,7 @@
+         return artifactClassMap;
+     }
+ 
+-    private Set buildDependencyClasses( MavenProject project )
++    protected Set buildDependencyClasses( MavenProject project , Map artifactClassMap )
+         throws IOException
+     {
+         Set dependencyClasses = new HashSet();
+@@ -212,7 +212,7 @@
+         return usedArtifacts;
+     }
+ 
+-    private Artifact findArtifactForClassName( Map artifactClassMap, String className )
++    protected Artifact findArtifactForClassName( Map artifactClassMap, String className )
+     {
+         for ( Iterator artifactIterator = artifactClassMap.keySet().iterator(); artifactIterator.hasNext(); )
+         {
+Index: pom.xml
+===================================================================
+--- pom.xml	(revision 942371)
++++ pom.xml	(working copy)
+@@ -30,7 +30,7 @@
+   <groupId>org.apache.maven.shared</groupId>
+   <artifactId>maven-dependency-analyzer</artifactId>
+   <packaging>jar</packaging>
+-  <version>1.1</version>
++  <version>1.1-SNAPSHOT</version>
+ 
+   <name>Maven Dependency Analyzer</name>
+ 
