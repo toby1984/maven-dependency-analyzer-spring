@@ -1,0 +1,69 @@
+2010-05-09 , tobias.gierke@code-sourcery.de
+
+Introduction
+------------
+
+This project enhances the Maven Dependency Plugin 
+
+http://maven.apache.org/plugins/maven-dependency-plugin
+
+by adding support for extracing dependency information
+from a project's Spring XML files.
+
+When enabled, a project's resources and test resources (usually located
+in src/main/resources and src/test/resources) will be scanned for Spring XML files and all
+bean definitions will be considered as project dependencies as well.
+
+Requirements
+------------
+
+Java JDK 1.5+ (both for compiling AND RUNNING the plugin)
+Maven 2.2.1+ (older versions will probably work as well)
+
+Compiling and installing
+------------------------
+
+To actually get the maven-dependency-plugin to support the new ProjectDependencyAnalyzer,
+you currently need to manually patch and 'mvn install' both
+
+maven-dependency-analyzer  1.1 (http://svn.apache.org/repos/asf/maven/shared/tags/maven-dependency-analyzer-1.1)
+maven-dependency-plugin 2.1 (http://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.1)
+
+using the patch files in the top-level directory.
+
+I'm trying to get the Maven guys to accept my patches but 
+since I'm new to Maven plugin development the code will 
+most likely need some more work (if it gets accepted at all).
+
+Usage
+-----
+
+The patched & installed maven-dependency-plugin currently has version 2.1-SNAPSHOT.
+
+To enable the new feature (scanning dependencies in Spring XMLs) , you 
+need to pass an 'includeSpringXmls=true' property to the plugin (either
+using '-DincludeSpringXmls=true' on the command-line or by adding it as 
+a plugin configuration in your pom.xml).
+
+To use the patched snapshot version you need to either 
+specify the version number on the command-line
+
+mvn -DincludeSpringXmls=true org.apache.maven.plugins:maven-dependency-plugin:2.1-SNAPSHOT:<goal>
+ 
+or declare the maven-dependency-plugin in your pom.xml using the following
+XML snippet:
+
+--->8---->8---
+<build>
+  <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1-SNAPSHOT</version>
+        <configuration>
+          <includeSpringXmls>true</includeSpringXmls>
+        </configuration>
+      </plugin>
+  </plugins>
+</build>
+--->8---->8---
