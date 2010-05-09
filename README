@@ -54,17 +54,11 @@ Usage
 
 The patched & installed maven-dependency-plugin currently has version 2.1-SNAPSHOT.
 
-To enable the new feature (scanning dependencies in Spring XMLs) , you 
-need to pass an 'includeSpringXmls=true' property to the plugin (either
-using '-DincludeSpringXmls=true' on the command-line or by adding it as 
-a plugin configuration in your pom.xml).
+To enable scanning Spring XMLs for dependencies you need to add 
+this project's artifact as a dependency of the maven-dependency-plugin 
+*AND* set the plugin'S new 'analyzer' property to value 'spring'. 
 
-To use the patched snapshot version you need to either 
-specify the version number on the command-line
-
-mvn -DincludeSpringXmls=true org.apache.maven.plugins:maven-dependency-plugin:2.1-SNAPSHOT:<goal>
- 
-or declare the maven-dependency-plugin in your pom.xml using the following
+Declare the maven-dependency-plugin in your pom.xml using the following
 XML snippet:
 
 --->8---->8---
@@ -74,10 +68,22 @@ XML snippet:
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>2.1-SNAPSHOT</version>
+        <dependencies>
+          <dependency>
+            <groupId>de.codesourcery.maven.shared</groupId>
+            <artifactId>maven-dependency-analyzer-spring</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
         <configuration>
-          <includeSpringXmls>true</includeSpringXmls>
+          <analyzer>spring</analyzer>
         </configuration>
       </plugin>
   </plugins>
 </build>
 --->8---->8---
+
+When running 'mvn dependency:analyze' on a project
+with Spring XMLs , you should see the following output:
+
+[INFO] Scanned Spring XML < ... Spring XML file ...> 

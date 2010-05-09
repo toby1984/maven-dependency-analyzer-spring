@@ -37,40 +37,36 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
       * The Maven project to analyze.
       * 
       * @parameter expression="${project}"
-@@ -59,12 +74,9 @@
+@@ -58,13 +73,11 @@
+     private MavenProject project;
  
      /**
-      * The Maven project dependency analyzer to use.
--     * 
+-     * The Maven project dependency analyzer to use.
++     * Project dependency analyzer to use (plexus component role-hint).
+      * 
 -     * @component
 -     * @required
 -     * @readonly
-+     * @parameter expression="${includeSpringXmls}" default-value="false"
++     * @parameter expression="${analyzer}" default-value="default"
       */
 -    private ProjectDependencyAnalyzer analyzer;
-+    private boolean includeSpringXmls;
++    private String analyzer;
  
      /**
       * Whether to fail the build if a dependency warning is found.
-@@ -157,19 +169,43 @@
+@@ -157,19 +170,37 @@
          }
      }
  
 +    protected ProjectDependencyAnalyzer createAnalyzer() throws ContextException, ComponentLookupException {
 +    	
 +    	final String role = ProjectDependencyAnalyzer.ROLE;
-+    	final String hint;
-+    	if ( ! includeSpringXmls ) {
-+    		hint = "default";
-+    	} else {
-+    		hint = "spring";
-+    		getLog().info("Including dependencies from Spring XMLs in analysis");
-+    	}
++    	final String roleHint = analyzer;
 +    	
 +    	final PlexusContainer container = (PlexusContainer) 
 +    		context.get( PlexusConstants.PLEXUS_KEY );
 +    	
-+		return (ProjectDependencyAnalyzer) container.lookup( role  , hint );
++		return (ProjectDependencyAnalyzer) container.lookup( role  , roleHint );
 +    }
 +    
 +    public void contextualize( Context context ) throws ContextException {
@@ -110,17 +106,12 @@ Index: pom.xml
    <packaging>maven-plugin</packaging>
  
    <name>Maven Dependency Plugin</name>
-@@ -162,7 +162,12 @@
+@@ -162,7 +162,7 @@
      <dependency>
        <groupId>org.apache.maven.shared</groupId>
        <artifactId>maven-dependency-analyzer</artifactId>
 -      <version>1.1</version>
 +      <version>1.1-SNAPSHOT</version>
-+    </dependency>
-+    <dependency>
-+      <groupId>org.apache.maven.shared</groupId>
-+      <artifactId>maven-dependency-analyzer-spring</artifactId>
-+      <version>1.0.0-SNAPSHOT</version>
      </dependency>
      <dependency>
        <groupId>org.apache.maven.shared</groupId>
