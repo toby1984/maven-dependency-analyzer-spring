@@ -1,0 +1,71 @@
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-analyzer/src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java maven-dependency-analyzer_patched/src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java
+*** maven-dependency-analyzer/src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java	2010-05-09 22:18:37.000000000 +0200
+--- maven-dependency-analyzer_patched/src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java	2010-05-09 17:55:39.000000000 +0200
+***************
+*** 38,44 ****
+   * 
+   * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
+   * @version $Id: DefaultProjectDependencyAnalyzer.java 661727 2008-05-30 14:21:49Z bentmann $
+!  * @plexus.component role="org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer"
+   */
+  public class DefaultProjectDependencyAnalyzer
+      implements ProjectDependencyAnalyzer
+--- 38,44 ----
+   * 
+   * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
+   * @version $Id: DefaultProjectDependencyAnalyzer.java 661727 2008-05-30 14:21:49Z bentmann $
+!  * @plexus.component role="org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer" role-hint="default"
+   */
+  public class DefaultProjectDependencyAnalyzer
+      implements ProjectDependencyAnalyzer
+***************
+*** 71,77 ****
+          {
+              Map artifactClassMap = buildArtifactClassMap( project );
+  
+!             Set dependencyClasses = buildDependencyClasses( project );
+  
+              Set declaredArtifacts = buildDeclaredArtifacts( project );
+              
+--- 71,77 ----
+          {
+              Map artifactClassMap = buildArtifactClassMap( project );
+  
+!             Set dependencyClasses = buildDependencyClasses( project , artifactClassMap );
+  
+              Set declaredArtifacts = buildDeclaredArtifacts( project );
+              
+***************
+*** 159,165 ****
+          return artifactClassMap;
+      }
+  
+!     private Set buildDependencyClasses( MavenProject project )
+          throws IOException
+      {
+          Set dependencyClasses = new HashSet();
+--- 159,165 ----
+          return artifactClassMap;
+      }
+  
+!     protected Set buildDependencyClasses( MavenProject project , Map artifactClassMap )
+          throws IOException
+      {
+          Set dependencyClasses = new HashSet();
+***************
+*** 212,218 ****
+          return usedArtifacts;
+      }
+  
+!     private Artifact findArtifactForClassName( Map artifactClassMap, String className )
+      {
+          for ( Iterator artifactIterator = artifactClassMap.keySet().iterator(); artifactIterator.hasNext(); )
+          {
+--- 212,218 ----
+          return usedArtifacts;
+      }
+  
+!     protected Artifact findArtifactForClassName( Map artifactClassMap, String className )
+      {
+          for ( Iterator artifactIterator = artifactClassMap.keySet().iterator(); artifactIterator.hasNext(); )
+          {

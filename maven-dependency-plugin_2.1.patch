@@ -70,7 +70,7 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
 +        }
 +        catch ( Exception exception )
 +        {
-+            throw new MojoExecutionException( "Failed to instantiate " + "ProjectDependencyAnalyser with role " + role
++            throw new MojoExecutionException( "Failed to instantiate " + "ProjectDependencyAnalyzer with role " + role
 +                + " / role-hint " + roleHint,exception );
 +        }
 +    }

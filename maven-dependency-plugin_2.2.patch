@@ -1,0 +1,377 @@
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/pom.xml maven-dependency-plugin_patched/pom.xml
+*** maven-dependency-plugin/pom.xml	2010-05-09 22:09:25.000000000 +0200
+--- maven-dependency-plugin_patched/pom.xml	2010-05-09 21:05:01.000000000 +0200
+***************
+*** 262,267 ****
+--- 262,270 ----
+                <pomIncludes>
+                  <pomInclude>*/pom.xml</pomInclude>
+                </pomIncludes>
++               <setupIncludes>
++                 <setupInclude>setup-custom-analyzer/pom.xml</setupInclude>
++               </setupIncludes>
+                <preBuildHookScript>setup</preBuildHookScript>
+                <postBuildHookScript>validate</postBuildHookScript>
+                <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/src/it/custom-analyzer/invoker.properties maven-dependency-plugin_patched/src/it/custom-analyzer/invoker.properties
+*** maven-dependency-plugin/src/it/custom-analyzer/invoker.properties	1970-01-01 01:00:00.000000000 +0100
+--- maven-dependency-plugin_patched/src/it/custom-analyzer/invoker.properties	2010-05-09 19:40:36.000000000 +0200
+***************
+*** 0 ****
+--- 1 ----
++ invoker.goals = clean ${project.groupId}:${project.artifactId}:${project.version}:analyze
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/src/it/custom-analyzer/pom.xml maven-dependency-plugin_patched/src/it/custom-analyzer/pom.xml
+*** maven-dependency-plugin/src/it/custom-analyzer/pom.xml	1970-01-01 01:00:00.000000000 +0100
+--- maven-dependency-plugin_patched/src/it/custom-analyzer/pom.xml	2010-05-09 20:37:54.000000000 +0200
+***************
+*** 0 ****
+--- 1,65 ----
++ <?xml version="1.0" encoding="UTF-8"?>
++ <!--
++   ~ Licensed to the Apache Software Foundation (ASF) under one
++   ~ or more contributor license agreements.  See the NOTICE file
++   ~ distributed with this work for additional information
++   ~ regarding copyright ownership.  The ASF licenses this file
++   ~ to you under the Apache License, Version 2.0 (the
++   ~ "License"); you may not use this file except in compliance
++   ~ with the License.  You may obtain a copy of the License at
++   ~
++   ~   http://www.apache.org/licenses/LICENSE-2.0
++   ~
++   ~ Unless required by applicable law or agreed to in writing,
++   ~ software distributed under the License is distributed on an
++   ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++   ~ KIND, either express or implied.  See the License for the
++   ~ specific language governing permissions and limitations
++   ~ under the License.
++   -->
++ 
++ <project xmlns="http://maven.apache.org/POM/4.0.0"
++          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
++   <modelVersion>4.0.0</modelVersion>
++ 
++   <groupId>org.apache.maven.its.dependency</groupId>
++   <artifactId>test</artifactId>
++   <version>1.0-SNAPSHOT</version>
++ 
++   <name>Test</name>
++   <description>
++     Test dependency:analyze
++   </description>
++ 
++   <properties>
++     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
++   </properties>
++ 
++   <build>
++     <plugins>
++       <plugin>
++         <artifactId>maven-dependency-plugin</artifactId>
++         <version>@project.version@</version>
++         <dependencies>
++           <dependency>
++             <groupId>com.dummy</groupId>
++             <artifactId>custom-analyzer</artifactId>
++             <version>1.0.0</version>
++           </dependency>
++         </dependencies>
++         <configuration>
++           <analyzer>dummy</analyzer>
++         </configuration>
++       </plugin>
++     </plugins>
++   </build>
++ 
++   <dependencies>
++     <dependency>
++       <groupId>org.apache.maven</groupId>
++       <artifactId>maven-project</artifactId>
++       <version>2.0.6</version>
++     </dependency>
++   </dependencies>
++ </project>
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/src/it/custom-analyzer/src/main/java/Main.java maven-dependency-plugin_patched/src/it/custom-analyzer/src/main/java/Main.java
+*** maven-dependency-plugin/src/it/custom-analyzer/src/main/java/Main.java	1970-01-01 01:00:00.000000000 +0100
+--- maven-dependency-plugin_patched/src/it/custom-analyzer/src/main/java/Main.java	2010-05-09 19:40:36.000000000 +0200
+***************
+*** 0 ****
+--- 1,3 ----
++ public class Main
++ {
++ }
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/src/it/custom-analyzer/validate.bsh maven-dependency-plugin_patched/src/it/custom-analyzer/validate.bsh
+*** maven-dependency-plugin/src/it/custom-analyzer/validate.bsh	1970-01-01 01:00:00.000000000 +0100
+--- maven-dependency-plugin_patched/src/it/custom-analyzer/validate.bsh	2010-05-09 21:39:09.000000000 +0200
+***************
+*** 0 ****
+--- 1,25 ----
++ import java.io.*;
++ 
++ BufferedReader reader = new BufferedReader(new FileReader( new File( basedir, "build.log" ) ) );
++ boolean found=false;
++ try {
++   StringBuffer buffer = new StringBuffer();
++   String line;
++   while ( ( line = reader.readLine() ) !=  null ) {
++     if ( line.contains("==== CUSTOM ANALYZER ====") ) {
++       found=true;
++       break;
++     }
++   }
++ } 
++ finally 
++ {
++   reader.close();
++ }
++ 
++ if ( !found )
++ {
++   throw new Exception( "custom ProjectDependencyAnalyzer did not run" );
++ }
++ 
++ return true;
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/src/it/setup-custom-analyzer/invoker.properties maven-dependency-plugin_patched/src/it/setup-custom-analyzer/invoker.properties
+*** maven-dependency-plugin/src/it/setup-custom-analyzer/invoker.properties	1970-01-01 01:00:00.000000000 +0100
+--- maven-dependency-plugin_patched/src/it/setup-custom-analyzer/invoker.properties	2010-05-09 21:23:40.000000000 +0200
+***************
+*** 0 ****
+--- 1 ----
++ invoker.goals = clean install
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/src/it/setup-custom-analyzer/pom.xml maven-dependency-plugin_patched/src/it/setup-custom-analyzer/pom.xml
+*** maven-dependency-plugin/src/it/setup-custom-analyzer/pom.xml	1970-01-01 01:00:00.000000000 +0100
+--- maven-dependency-plugin_patched/src/it/setup-custom-analyzer/pom.xml	2010-05-09 21:27:48.000000000 +0200
+***************
+*** 0 ****
+--- 1,41 ----
++ <?xml version="1.0" encoding="utf-8"?>
++ <!--
++  * Licensed to the Apache Software Foundation (ASF) under one
++  * or more contributor license agreements.  See the NOTICE file
++  * distributed with this work for additional information
++  * regarding copyright ownership.  The ASF licenses this file
++  * to you under the Apache License, Version 2.0 (the
++  * "License"); you may not use this file except in compliance
++  * with the License.  You may obtain a copy of the License at
++  *
++  * http://www.apache.org/licenses/LICENSE-2.0
++  *
++  * Unless required by applicable law or agreed to in writing,
++  * software distributed under the License is distributed on an
++  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++  * KIND, either express or implied.  See the License for the
++  * specific language governing permissions and limitations
++  * under the License. 
++  *
++ -->
++ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
++   <modelVersion>4.0.0</modelVersion>
++   <groupId>com.dummy</groupId>
++   <artifactId>custom-analyzer</artifactId>
++   <packaging>jar</packaging>
++   <version>1.0.0</version>
++   <description>custom ProjectDependencyAnalyzer implementation for integration testing</description>
++   <name>custom-analyzer</name>
++   <dependencies>
++     <dependency>
++       <groupId>org.apache.maven</groupId>
++       <artifactId>maven-project</artifactId>
++       <version>2.0.5</version>
++     </dependency>
++     <dependency>
++       <groupId>org.apache.maven.shared</groupId>
++       <artifactId>maven-dependency-analyzer</artifactId>
++       <version>1.2</version>
++     </dependency>
++   </dependencies>
++ </project>
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/src/it/setup-custom-analyzer/src/main/java/com/dummy/DummyProjectDependencyAnalyzer.java maven-dependency-plugin_patched/src/it/setup-custom-analyzer/src/main/java/com/dummy/DummyProjectDependencyAnalyzer.java
+*** maven-dependency-plugin/src/it/setup-custom-analyzer/src/main/java/com/dummy/DummyProjectDependencyAnalyzer.java	1970-01-01 01:00:00.000000000 +0100
+--- maven-dependency-plugin_patched/src/it/setup-custom-analyzer/src/main/java/com/dummy/DummyProjectDependencyAnalyzer.java	2010-05-09 20:23:02.000000000 +0200
+***************
+*** 0 ****
+--- 1,23 ----
++ package com.dummy;
++ 
++ import java.util.Map;
++ import java.util.Set;
++ 
++ import org.apache.maven.project.MavenProject;
++ import org.apache.maven.shared.dependency.analyzer.DefaultProjectDependencyAnalyzer;
++ 
++ /**
++  * Dummy <code>ProjectDependencyAnalyzer</code> for integration testing.
++  * 
++  * @author <a href="mailto:tobias.gierke@code-sourcery.de">Tobias Gierke</a>
++  * @plexus.component role="org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer" role-hint="dummy"
++  */
++ public class DummyProjectDependencyAnalyzer extends DefaultProjectDependencyAnalyzer
++ {
++     protected Set buildDependencyClasses(MavenProject project, 
++                                          Map artifactClassMap) throws java.io.IOException 
++     {
++         System.out.println("==== CUSTOM ANALYZER ====");
++         return super.buildDependencyClasses(  project , artifactClassMap );
++     };
++ }
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/src/it/setup-custom-analyzer/src/main/resources/META-INF/plexus/components.xml maven-dependency-plugin_patched/src/it/setup-custom-analyzer/src/main/resources/META-INF/plexus/components.xml
+*** maven-dependency-plugin/src/it/setup-custom-analyzer/src/main/resources/META-INF/plexus/components.xml	1970-01-01 01:00:00.000000000 +0100
+--- maven-dependency-plugin_patched/src/it/setup-custom-analyzer/src/main/resources/META-INF/plexus/components.xml	2010-05-09 20:25:19.000000000 +0200
+***************
+*** 0 ****
+--- 1,37 ----
++ <!--
++ 
++     Copyright 2010 Tobias Gierke <tobias.gierke@code-sourcery.de>
++ 
++     Licensed under the Apache License, Version 2.0 (the "License");
++     you may not use this file except in compliance with the License.
++     You may obtain a copy of the License at
++ 
++     http://www.apache.org/licenses/LICENSE-2.0
++ 
++     Unless required by applicable law or agreed to in writing, software
++     distributed under the License is distributed on an "AS IS" BASIS,
++     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++     See the License for the specific language governing permissions and
++     limitations under the License.
++ 
++ -->
++ <component-set>
++   <components>
++     <component>
++       <role>org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer</role>
++       <role-hint>dummy</role-hint>
++       <implementation>com.dummy.DummyProjectDependencyAnalyzer</implementation>
++       <description></description>
++       <requirements>
++         <requirement>
++           <role>org.apache.maven.shared.dependency.analyzer.ClassAnalyzer</role>
++           <field-name>classAnalyzer</field-name>
++         </requirement>
++         <requirement>
++           <role>org.apache.maven.shared.dependency.analyzer.DependencyAnalyzer</role>
++           <field-name>dependencyAnalyzer</field-name>
++         </requirement>
++       </requirements>
++     </component>
++   </components>
++ </component-set>
+diff -N -C 3 -x -uw -r -B --exclude='*svn*' maven-dependency-plugin/src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java maven-dependency-plugin_patched/src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
+*** maven-dependency-plugin/src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java	2010-05-09 22:09:58.000000000 +0200
+--- maven-dependency-plugin_patched/src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java	2010-05-09 19:42:07.000000000 +0200
+***************
+*** 34,39 ****
+--- 34,45 ----
+  import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalysis;
+  import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
+  import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
++ import org.codehaus.plexus.PlexusConstants;
++ import org.codehaus.plexus.PlexusContainer;
++ import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
++ import org.codehaus.plexus.context.Context;
++ import org.codehaus.plexus.context.ContextException;
++ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+  import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+  
+  /**
+***************
+*** 46,55 ****
+--- 52,68 ----
+   */
+  public abstract class AbstractAnalyzeMojo
+      extends AbstractMojo
++     implements Contextualizable
+  {
+      // fields -----------------------------------------------------------------
+  
+      /**
++      * The plexus context to look-up the right {@link ProjectDependencyAnalyzer} implementation depending on the mojo
++      * configuration.
++      */
++     private Context context;
++ 
++     /**
+       * The Maven project to analyze.
+       *
+       * @parameter expression="${project}"
+***************
+*** 59,71 ****
+      private MavenProject project;
+  
+      /**
+!      * The Maven project dependency analyzer to use.
+       *
+!      * @component
+!      * @required
+!      * @readonly
+       */
+!     private ProjectDependencyAnalyzer analyzer;
+  
+      /**
+       * Whether to fail the build if a dependency warning is found.
+--- 72,83 ----
+      private MavenProject project;
+  
+      /**
+!      * Project dependency analyzer to use (plexus component role-hint).
+       *
+!      * @parameter expression="${analyzer}" default-value="default"
+!      * @since 2.2
+       */
+!     private String analyzer;
+  
+      /**
+       * Whether to fail the build if a dependency warning is found.
+***************
+*** 158,163 ****
+--- 170,201 ----
+          }
+      }
+  
++     protected ProjectDependencyAnalyzer createProjectDependencyAnalyzer()
++         throws MojoExecutionException
++     {
++ 
++         final String role = ProjectDependencyAnalyzer.ROLE;
++         final String roleHint = analyzer;
++ 
++         try
++         {
++             final PlexusContainer container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
++ 
++             return (ProjectDependencyAnalyzer) container.lookup( role, roleHint );
++         }
++         catch ( Exception exception )
++         {
++             throw new MojoExecutionException( "Failed to instantiate " + "ProjectDependencyAnalyser with role " + role
++                 + " / role-hint " + roleHint,exception );
++         }
++     }
++ 
++     public void contextualize( Context context )
++         throws ContextException
++     {
++         this.context = context;
++     }
++ 
+      // private methods --------------------------------------------------------
+  
+      private boolean checkDependencies()
+***************
+*** 166,172 ****
+          ProjectDependencyAnalysis analysis;
+          try
+          {
+!             analysis = analyzer.analyze( project );
+          }
+          catch ( ProjectDependencyAnalyzerException exception )
+          {
+--- 204,210 ----
+          ProjectDependencyAnalysis analysis;
+          try
+          {
+!             analysis = createProjectDependencyAnalyzer().analyze( project );
+          }
+          catch ( ProjectDependencyAnalyzerException exception )
+          {
