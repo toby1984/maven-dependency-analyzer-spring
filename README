@@ -23,13 +23,21 @@ Maven 2.2.1+ (older versions will probably work as well)
 Compiling and installing
 ------------------------
 
-To actually get the maven-dependency-plugin to support the new ProjectDependencyAnalyzer,
-you currently need to manually patch and 'mvn install' both
+To actually get the maven-dependency-plugin to support this extension:
 
-maven-dependency-analyzer  1.1 (http://svn.apache.org/repos/asf/maven/shared/tags/maven-dependency-analyzer-1.1)
-maven-dependency-plugin 2.1 (http://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.1)
+1. Patch and mvn install maven-dependency-analyzer 1.1
 
-using the patch files in the top-level directory.
+1.1 Checkout maven-dependency-analyzer 1.1 from http://svn.apache.org/repos/asf/maven/shared/tags/maven-dependency-analyzer-1.1
+1.2 Apply maven-dependency-analyzer_1.1.patch 
+1.3. mvn clean install
+
+2. Compile and mvn install this project
+
+3. Patch and mvn install maven-dependency-plugin 2.1
+
+3.1 Checkout maven-dependency-plugin 2.1 from http://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.1
+3.2 Apply maven-dependency-plugin_2.1.patch 
+3.3. mvn clean install
 
 I'm trying to get the Maven guys to accept my patches but 
 since I'm new to Maven plugin development the code will 
