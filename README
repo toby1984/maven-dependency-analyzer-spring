@@ -34,7 +34,7 @@ mvn install
 
 2. Patch and mvn install maven-dependency-plugin 2.1
 
-svn co from http://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.1 maven-dependency-plugin
+svn co http://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.1 maven-dependency-plugin
 cd maven-dependency-plugin
 patch -p0 <maven-dependency-plugin_2.1.patch
 mvn install
