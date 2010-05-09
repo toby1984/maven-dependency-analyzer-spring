@@ -26,83 +26,96 @@ import org.apache.maven.shared.dependency.analyzer.LoggingAware;
 import org.apache.maven.shared.dependency.analyzer.spring.SpringXmlParser.NoSpringXmlException;
 
 /**
- * Retrieves dependency information using
- * Spring XML configuration files in a Maven project.
- *
- * This class parses bean definitions from Spring XML
- * files and uses a {@link DefaultSpringXmlBeanVisitor}
- * to gather dependency information for each bean.
+ * Retrieves dependency information using Spring XML configuration 
+ * files in a Maven project. 
+ * 
+ * This class parses bean definitions from Spring XML files and uses a 
+ * {@link DefaultSpringXmlBeanVisitor} to gather dependency information for
+ * each bean.
  * 
  * @author tobias.gierke@code-sourcery.de
  * @see DefaultSpringXmlBeanVisitor
  */
-public class SpringProjectDependencyAnalyzer implements LoggingAware {
-	
-	private SpringXmlParser fileParser;
-	private SpringXmlFileLocator fileLocator;
-	private ArtifactForClassResolver resolver;
-	
-	private Log log;
-	
-	public SpringProjectDependencyAnalyzer() {
-	}
-	
-	public void setLog(Log log) {
-		this.log = log;
-	}
-	
-	/**
-	 * Retrieves dependency information from
-     * Spring XML configuration files in a Maven project.
+public class SpringProjectDependencyAnalyzer
+    implements LoggingAware
+{
+    private SpringXmlParser fileParser;
+
+    private SpringXmlFileLocator fileLocator;
+
+    private ArtifactForClassResolver resolver;
+
+    private Log log;
+
+    public SpringProjectDependencyAnalyzer()
+    {
+    }
+
+    public void setLog( Log log )
+    {
+        this.log = log;
+    }
+
+    /**
+     * Retrieves dependency information from Spring XML configuration files in a Maven project.
      * 
-	 * @param project the project to analyze
-	 * @param dependentClasses A set of classes that already had
-	 * their dependencies analyzed. This method will <b>ADD</b>
-	 * all Spring-induced dependencies to this set and
-	 * also use it to determine whether a given class
-	 * needs to have it's dependencies analyzed.
-	 * @throws Exception
-	 */
-	public void addSpringDependencyClasses(MavenProject project,final Set<String> dependentClasses)
-	throws Exception 
-	{
-		final SpringFileBeanVisitor beanVisitor =
-			new DefaultSpringXmlBeanVisitor(this.resolver , dependentClasses );
-		
-		for ( File springXml : fileLocator.locateSpringXmls( project ) ) {
-			
-			final BufferedInputStream in = new BufferedInputStream( new FileInputStream( springXml ) );
-			try {
-				fileParser.parse( in , beanVisitor );
-				if ( log != null && log.isInfoEnabled() ) {
-					log.info("Scanned Spring XML "+springXml.getPath() );
-				}
-			} catch(NoSpringXmlException ex) 
-			{
-				if ( log != null && log.isDebugEnabled() ) {
-					log.debug("Not a Spring XML file : "+springXml.getPath());
-				}
-				// ok
-			} catch(Exception e) {
-				if ( log != null ) {
-					log.error("Failed to parse Spring XML "+springXml.getPath()+" ..." , e);
-				}
-				throw e;
-			} finally {
-				in.close();
-			}
-		}
-	}
-		
-	public void setFileParser(SpringXmlParser fileParser) {
-		this.fileParser = fileParser;
-	}
-	
-	public void setFileLocator(SpringXmlFileLocator fileLocator) {
-		this.fileLocator = fileLocator;
-	}
-	
-	public void setResolver(ArtifactForClassResolver resolver) {
-		this.resolver = resolver;
-	}
+     * @param project the project to analyze
+     * @param dependentClasses A set of classes that already had their dependencies analyzed. This method will
+     *            <b>ADD</b> all Spring-induced dependencies to this set and also use it to determine whether a given
+     *            class needs to have it's dependencies analyzed.
+     * @throws Exception
+     */
+    public void addSpringDependencyClasses( MavenProject project, final Set<String> dependentClasses )
+        throws Exception
+    {
+        final SpringFileBeanVisitor beanVisitor = new DefaultSpringXmlBeanVisitor( this.resolver, dependentClasses );
+
+        for ( File springXml : fileLocator.locateSpringXmls( project ) )
+        {
+            final BufferedInputStream in = new BufferedInputStream( new FileInputStream( springXml ) );
+            try
+            {
+                fileParser.parse( in, beanVisitor );
+                if ( log != null && log.isInfoEnabled() )
+                {
+                    log.info( "Scanned Spring XML " + springXml.getPath() );
+                }
+            }
+            catch ( NoSpringXmlException ex )
+            {
+                if ( log != null && log.isDebugEnabled() )
+                {
+                    log.debug( "Not a Spring XML file : " + springXml.getPath() );
+                }
+                // ok
+            }
+            catch ( Exception e )
+            {
+                if ( log != null )
+                {
+                    log.error( "Failed to parse Spring XML " + springXml.getPath() + " ...", e );
+                }
+                throw e;
+            }
+            finally
+            {
+                in.close();
+            }
+        }
+    }
+
+    public void setFileParser( SpringXmlParser fileParser )
+    {
+        this.fileParser = fileParser;
+    }
+
+    public void setFileLocator( SpringXmlFileLocator fileLocator )
+    {
+        this.fileLocator = fileLocator;
+    }
+
+    public void setResolver( ArtifactForClassResolver resolver )
+    {
+        this.resolver = resolver;
+    }
 }

@@ -33,185 +33,203 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 
-public class DefaultSpringXmlFileLocator implements SpringXmlFileLocator {
+public class DefaultSpringXmlFileLocator
+    implements SpringXmlFileLocator
+{
 
-	private Log log;
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<File> locateSpringXmls(MavenProject project) throws IOException {
-		final Set<File> result = new HashSet<File>();
-		addSpringXmls( project.getResources() , result );
-		addSpringXmls( project.getTestResources() , result );
+    private Log log;
 
-		return result;
-	}
-	
-	public void setLog(Log log) {
-		this.log = log;
-	}
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public Set<File> locateSpringXmls( MavenProject project )
+        throws IOException
+    {
+        final Set<File> result = new HashSet<File>();
+        addSpringXmls( project.getResources(), result );
+        addSpringXmls( project.getTestResources(), result );
 
-	private final boolean isLogDebug() {
-		return log != null && log.isDebugEnabled();
-	}
+        return result;
+    }
 
-	private void addSpringXmls(List<Resource> resources , Set<File> springXmls) throws IOException 
-	{
-		final boolean logDebug = isLogDebug();
-		
-		for ( Resource r : resources ) 
-		{
-			if ( logDebug ) {
-				log.debug("Scanning "+r.getDirectory());
-			}
-			
-			final File dir = new File( r.getDirectory() );
-			
-			if ( ! dir.isDirectory() ) {
-				if ( logDebug ) {
-					log.debug("Skipping non-directory "+dir.getAbsolutePath() );
-				}
-				continue;
-			}
-			
-			final FileFilter selector = 
-				new ResourceFileFilter( r );
-			
-			
-			if ( logDebug ) {
-				log.debug("Scanning for Spring XMLs ... "+dir.getAbsolutePath() );
-			}
-			
-			final File[] filesInDir = dir.listFiles( selector );
-			if ( filesInDir == null ) {
-				continue; // empty directory
-			}
-			
-			for ( File file : filesInDir ) 
-			{
-				if ( isSpringXml( file ) ) {
-					springXmls.add( file );
-				} 
-				else if ( file.isDirectory() ) 
-				{
-					scanDirectoryForSpringXmls( file ,selector , springXmls );
-				}
-			}
-		}
-	}
+    public void setLog( Log log )
+    {
+        this.log = log;
+    }
 
-	protected boolean isSpringXml(File file) throws IOException {
+    private final boolean isLogDebug()
+    {
+        return log != null && log.isDebugEnabled();
+    }
 
-		if ( ! file.isFile() ) {
-			return false;
-		}
+    private void addSpringXmls( List<Resource> resources, Set<File> springXmls )
+        throws IOException
+    {
+        final boolean logDebug = isLogDebug();
 
-		final BufferedReader in =
-			new BufferedReader( new FileReader( file ) );
+        for ( Resource r : resources )
+        {
+            if ( logDebug )
+            {
+                log.debug( "Scanning " + r.getDirectory() );
+            }
 
-		try {
-			final String line = in.readLine();
-			// TODO: This is a VERY basic check...
-			return line != null && line.startsWith("<?xml");
-		} finally {
-			in.close();
-		}
-	}
+            final File dir = new File( r.getDirectory() );
+            if ( dir.isDirectory() )
+            {
+                scanDirectoryForSpringXmls( dir, new ResourceFileFilter( r ), springXmls );
+            }
+            else if ( logDebug )
+            {
+                log.debug( "Skipping non-directory " + dir.getAbsolutePath() );
+            }
+        }
+    }
 
-	private void scanDirectoryForSpringXmls(File directory,
-			FileFilter selector,
-			Set<File> springXmls) 
-	throws IOException 
-	{
-		if ( isLogDebug() ) {
-			log.debug("Scanning for Spring XMLs ... "+directory.getAbsolutePath() );
-		}
-		
-		for ( File file : directory.listFiles( selector ) ) 
-		{
-			if ( ! file.isDirectory() ) 
-			{
-				if ( isSpringXml( file ) ) {
-					springXmls.add( file );
-				}
-			} 
-			else {
-				scanDirectoryForSpringXmls( file , selector , springXmls );
-			} 
-		}
-	}
+    protected boolean isSpringXml( File file )
+        throws IOException
+    {
 
-	private interface FileSelector {
-		public boolean isSelected(File file) throws IOException;
-	}
+        if ( !file.isFile() )
+        {
+            return false;
+        }
 
-	private static final class ResourceFileSelector implements FileSelector {
+        final BufferedReader in = new BufferedReader( new FileReader( file ) );
 
-		private final IncludeExcludeFileSelector selector;
+        try
+        {
+            final String line = in.readLine();
+            // TODO: This is a VERY basic check...
+            return line != null && line.startsWith( "<?xml" );
+        }
+        finally
+        {
+            in.close();
+        }
+    }
 
-		@SuppressWarnings("unchecked")
-		public ResourceFileSelector(Resource resource) {
-			selector = new IncludeExcludeFileSelector();
-			selector.setExcludes( toArrayOrNull( resource.getExcludes() ) );
-			selector.setIncludes( toArrayOrNull( resource.getIncludes() ) );
-		}
+    private void scanDirectoryForSpringXmls( File directory, FileFilter selector, Set<File> springXmls )
+        throws IOException
+    {
+        if ( isLogDebug() )
+        {
+            log.debug( "Scanning for Spring XMLs ... " + directory.getAbsolutePath() );
+        }
 
-		@Override
-		public boolean isSelected(File file) throws IOException {
-			return selector.isSelected( createFileInfo( file ) );
-		}
+        final File[] filesInDir = directory.listFiles( selector );
+        if ( filesInDir == null )
+        {
+            return;
+        }
 
-		private FileInfo createFileInfo(final File file) throws IOException {
-			return new FileInfo() {
+        for ( File file : filesInDir )
+        {
+            if ( !file.isDirectory() )
+            {
+                if ( isSpringXml( file ) )
+                {
+                    springXmls.add( file );
+                }
+            }
+            else
+            {
+                scanDirectoryForSpringXmls( file, selector, springXmls );
+            }
+        }
+    }
 
-				@Override
-				public InputStream getContents() throws IOException {
-					return new FileInputStream( file );
-				}
+    private interface FileSelector
+    {
+        public boolean isSelected( File file )
+            throws IOException;
+    }
 
-				@Override
-				public String getName() {
-					return file.getName();
-				}
+    private static final class ResourceFileSelector
+        implements FileSelector
+    {
 
-				@Override
-				public boolean isDirectory() {
-					return file.isDirectory();
-				}
+        private final IncludeExcludeFileSelector selector;
 
-				@Override
-				public boolean isFile() {
-					return file.isFile();
-				}
-			};
-		}
-	}
+        @SuppressWarnings( "unchecked" )
+        public ResourceFileSelector( Resource resource )
+        {
+            selector = new IncludeExcludeFileSelector();
+            selector.setExcludes( toArrayOrNull( resource.getExcludes() ) );
+            selector.setIncludes( toArrayOrNull( resource.getIncludes() ) );
+        }
+        
+        private static String[] toArrayOrNull( Collection<String> strings )
+        {
+            return strings == null || strings.isEmpty() ? null : strings.toArray( new String[strings.size()] );
+        }
 
-	private static final class ResourceFileFilter implements FileFilter {
+        @Override
+        public boolean isSelected( File file )
+            throws IOException
+        {
+            return selector.isSelected( createFileInfo( file ) );
+        }
 
-		private final FileSelector fileSelector;
+        private FileInfo createFileInfo( final File file )
+            throws IOException
+        {
+            return new FileInfo()
+            {
+                @Override
+                public InputStream getContents()
+                    throws IOException
+                {
+                    return new FileInputStream( file );
+                }
 
-		public ResourceFileFilter(Resource resource) {
-			if (resource == null) {
-				throw new IllegalArgumentException("selector cannot be NULL");
-			}
-			this.fileSelector = new ResourceFileSelector( resource );
-		}
+                @Override
+                public String getName()
+                {
+                    return file.getName();
+                }
 
-		@Override
-		public boolean accept(File pathname) {
-			try {
-				return fileSelector.isSelected( pathname );
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
+                @Override
+                public boolean isDirectory()
+                {
+                    return file.isDirectory();
+                }
 
-	}
+                @Override
+                public boolean isFile()
+                {
+                    return file.isFile();
+                }
+            };
+        }
+    }
 
-	private static final String[] toArrayOrNull(Collection<String> strings) {
-		return strings == null || strings.isEmpty() ? null : strings.toArray( new String[ strings.size() ] );
-	}
+    private static final class ResourceFileFilter
+        implements FileFilter
+    {
+        private final FileSelector fileSelector;
 
+        public ResourceFileFilter( Resource resource )
+        {
+            if ( resource == null )
+            {
+                throw new IllegalArgumentException( "selector cannot be NULL" );
+            }
+            this.fileSelector = new ResourceFileSelector( resource );
+        }
+
+        @Override
+        public boolean accept( File pathname )
+        {
+            try
+            {
+                return fileSelector.isSelected( pathname );
+            }
+            catch ( IOException e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+
+    }
 
 }

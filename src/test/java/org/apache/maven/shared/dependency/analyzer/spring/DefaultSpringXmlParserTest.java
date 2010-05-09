@@ -28,80 +28,90 @@ import org.apache.maven.shared.dependency.analyzer.spring.DefaultSpringXmlParser
 import org.apache.maven.shared.dependency.analyzer.spring.SpringFileBeanVisitor;
 import org.apache.maven.shared.dependency.analyzer.spring.SpringXmlParser.NoSpringXmlException;
 
-public class DefaultSpringXmlParserTest extends TestCase {
+public class DefaultSpringXmlParserTest
+    extends TestCase
+{
 
-	private DefaultSpringXmlParser parser;
+    private DefaultSpringXmlParser parser;
 
-	private static final String SIMPLE_XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
-			"<beans>\n" + 
-			"<bean id=\"someBean\" class=\"some.package.SomeClass\" />\n" + 
-			"<bean id=\"someOtherBean\" class=\"some.other.package.SomeOtherClass\" />\n" + 
-			"</beans>";
-	
-	private static final String SIMPLE_XML_WITH_NS = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
-	"<beans xmlns=\"http://www.springframework.org/schema/beans\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:aop=\"http://www.springframework.org/schema/aop\" xmlns:tx=\"http://www.springframework.org/schema/tx\"\n" + 
-	"xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd\">\n" + 
-	"<bean id=\"someBean\" class=\"some.package.SomeClass\" />\n" + 
-	"<bean id=\"someOtherBean\" class=\"some.other.package.SomeOtherClass\" />\n" + 
-	"</beans>";
-	
-	private static final String INVALID_XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
-	"<unexpectedRootElement/>"; 
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		parser = new DefaultSpringXmlParser();
-	}
-	
-	private static InputStream toStream(String data) {
-		return new ByteArrayInputStream( data.getBytes() );
-	}
-	
-	public void testParseInvalidFile() throws Exception {
-		
-		final SpringFileBeanVisitor visitor =
-			createMock( SpringFileBeanVisitor.class );
-		
-		replay( visitor );
+    private static final String SIMPLE_XML =
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + "<beans>\n"
+            + "<bean id=\"someBean\" class=\"some.package.SomeClass\" />\n"
+            + "<bean id=\"someOtherBean\" class=\"some.other.package.SomeOtherClass\" />\n" + "</beans>";
 
-		try {
-			parser.parse( toStream( INVALID_XML ), visitor );
-			fail("Should've failed");
-		} catch(NoSpringXmlException e) {
-			// ok
-		}
-		
-		verify( visitor );
-	}
-	
-	public void testParseValidFile() throws Exception {
-	
-		final SpringFileBeanVisitor visitor =
-			createMock( SpringFileBeanVisitor.class );
-		
-		visitor.visitBeanDefinition("some.package.SomeClass" );
-		visitor.visitBeanDefinition("some.other.package.SomeOtherClass" );
-		
-		replay( visitor );
-		
-		parser.parse( toStream( SIMPLE_XML ), visitor );
-		
-		verify( visitor );
-	}
-	
-	public void testParseValidFileWithNamespaces() throws Exception {
-		
-		final SpringFileBeanVisitor visitor =
-			createMock( SpringFileBeanVisitor.class );
-		
-		visitor.visitBeanDefinition("some.package.SomeClass" );
-		visitor.visitBeanDefinition("some.other.package.SomeOtherClass" );
-		
-		replay( visitor );
-		
-		parser.parse( toStream( SIMPLE_XML_WITH_NS ), visitor );
-		
-		verify( visitor );
-	}
+    private static final String SIMPLE_XML_WITH_NS =
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+            + "<beans xmlns=\"http://www.springframework.org/schema/beans\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:aop=\"http://www.springframework.org/schema/aop\" xmlns:tx=\"http://www.springframework.org/schema/tx\"\n"
+            + "xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd\">\n"
+            + "<bean id=\"someBean\" class=\"some.package.SomeClass\" />\n"
+            + "<bean id=\"someOtherBean\" class=\"some.other.package.SomeOtherClass\" />\n" + "</beans>";
+
+    private static final String INVALID_XML =
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + "<unexpectedRootElement/>";
+
+    @Override
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+        parser = new DefaultSpringXmlParser();
+    }
+
+    private static InputStream toStream( String data )
+    {
+        return new ByteArrayInputStream( data.getBytes() );
+    }
+
+    public void testParseInvalidFile()
+        throws Exception
+    {
+
+        final SpringFileBeanVisitor visitor = createMock( SpringFileBeanVisitor.class );
+
+        replay( visitor );
+
+        try
+        {
+            parser.parse( toStream( INVALID_XML ), visitor );
+            fail( "Should've failed" );
+        }
+        catch ( NoSpringXmlException e )
+        {
+            // ok
+        }
+
+        verify( visitor );
+    }
+
+    public void testParseValidFile()
+        throws Exception
+    {
+
+        final SpringFileBeanVisitor visitor = createMock( SpringFileBeanVisitor.class );
+
+        visitor.visitBeanDefinition( "some.package.SomeClass" );
+        visitor.visitBeanDefinition( "some.other.package.SomeOtherClass" );
+
+        replay( visitor );
+
+        parser.parse( toStream( SIMPLE_XML ), visitor );
+
+        verify( visitor );
+    }
+
+    public void testParseValidFileWithNamespaces()
+        throws Exception
+    {
+
+        final SpringFileBeanVisitor visitor = createMock( SpringFileBeanVisitor.class );
+
+        visitor.visitBeanDefinition( "some.package.SomeClass" );
+        visitor.visitBeanDefinition( "some.other.package.SomeOtherClass" );
+
+        replay( visitor );
+
+        parser.parse( toStream( SIMPLE_XML_WITH_NS ), visitor );
+
+        verify( visitor );
+    }
 }
