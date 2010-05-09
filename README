@@ -44,7 +44,8 @@ mvn install
 cd maven-dependency-analyzer-spring 
 mvn install
 
-I'm trying to get the Maven guys to accept my patches but 
+I'm trying to get the Maven guys to accept my patches 
+(see http://jira.codehaus.org/browse/MDEP-262) but 
 since I'm new to Maven plugin development the code will 
 most likely need some more work (if it gets accepted at all).
 
