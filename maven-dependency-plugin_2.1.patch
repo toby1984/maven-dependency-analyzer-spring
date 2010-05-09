@@ -2,11 +2,7 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
 ===================================================================
 --- src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java	(revision 942469)
 +++ src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java	(working copy)
-@@ -30,9 +30,16 @@
- import org.apache.maven.plugin.MojoExecutionException;
- import org.apache.maven.plugin.MojoFailureException;
- import org.apache.maven.project.MavenProject;
-+import org.apache.maven.shared.dependency.analyzer.LoggingAware;
+@@ -33,6 +33,12 @@
  import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalysis;
  import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
  import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
@@ -19,7 +15,7 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
  import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
  
  /**
-@@ -44,9 +51,18 @@
+@@ -44,11 +50,20 @@
   * @since 2.0-alpha-5
   */
  public abstract class AbstractAnalyzeMojo
@@ -27,8 +23,8 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
 +    extends AbstractMojo implements Contextualizable
  {
      // fields -----------------------------------------------------------------
-+	
-+	/**
+ 
+     /**
 +	 * The plexus context to
 +	 * look-up the right 
 +	 * {@link ProjectDependencyAnalyzer}
@@ -36,10 +32,12 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
 +	 * on the mojo configuration. 
 +	 */
 +    private Context context;
- 
-     /**
++
++    /**
       * The Maven project to analyze.
-@@ -59,12 +75,9 @@
+      * 
+      * @parameter expression="${project}"
+@@ -59,12 +74,9 @@
  
      /**
       * The Maven project dependency analyzer to use.
@@ -54,7 +52,7 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
  
      /**
       * Whether to fail the build if a dependency warning is found.
-@@ -157,19 +170,50 @@
+@@ -157,19 +169,43 @@
          }
      }
  
@@ -72,14 +70,7 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
 +    	final PlexusContainer container = (PlexusContainer) 
 +    		context.get( PlexusConstants.PLEXUS_KEY );
 +    	
-+		final ProjectDependencyAnalyzer result =
-+    		(ProjectDependencyAnalyzer) container.lookup( role  , hint );
-+    	
-+    	if ( result instanceof LoggingAware ) {
-+    		((LoggingAware) result).setLog( getLog() );
-+    	}
-+    	
-+    	return result;
++		return (ProjectDependencyAnalyzer) container.lookup( role  , hint );
 +    }
 +    
 +    public void contextualize( Context context ) throws ContextException {
@@ -119,20 +110,17 @@ Index: pom.xml
    <packaging>maven-plugin</packaging>
  
    <name>Maven Dependency Plugin</name>
-@@ -162,10 +162,15 @@
+@@ -162,7 +162,12 @@
      <dependency>
        <groupId>org.apache.maven.shared</groupId>
        <artifactId>maven-dependency-analyzer</artifactId>
 -      <version>1.1</version>
 +      <version>1.1-SNAPSHOT</version>
-     </dependency>
-     <dependency>
-       <groupId>org.apache.maven.shared</groupId>
-+      <artifactId>maven-dependency-analyzer-spring</artifactId>
-+      <version>1.0.0-SNAPSHOT</version>
 +    </dependency>
 +    <dependency>
 +      <groupId>org.apache.maven.shared</groupId>
-       <artifactId>maven-dependency-tree</artifactId>
-       <version>1.2</version>
++      <artifactId>maven-dependency-analyzer-spring</artifactId>
++      <version>1.0.0-SNAPSHOT</version>
      </dependency>
+     <dependency>
+       <groupId>org.apache.maven.shared</groupId>

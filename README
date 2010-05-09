@@ -29,6 +29,9 @@ To actually get the maven-dependency-plugin to support this extension:
 
 1.1 Checkout maven-dependency-analyzer 1.1 from http://svn.apache.org/repos/asf/maven/shared/tags/maven-dependency-analyzer-1.1
 1.2 Apply maven-dependency-analyzer_1.1.patch 
+
+cd maven-dependency-analyzer ; patch -p0 -F3 <maven-dependency-analyzer_1.1.patch
+
 1.3. mvn clean install
 
 2. Compile and mvn install this project
@@ -37,6 +40,9 @@ To actually get the maven-dependency-plugin to support this extension:
 
 3.1 Checkout maven-dependency-plugin 2.1 from http://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.1
 3.2 Apply maven-dependency-plugin_2.1.patch 
+
+cd maven-dependency-plugin; patch -p0 <maven-dependency-plugin_2.1.patch
+
 3.3. mvn clean install
 
 I'm trying to get the Maven guys to accept my patches but 

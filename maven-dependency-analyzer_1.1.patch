@@ -1,6 +1,6 @@
 Index: src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java
 ===================================================================
---- src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java	(revision 942371)
+--- src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java	(revision 942535)
 +++ src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectDependencyAnalyzer.java	(working copy)
 @@ -38,7 +38,7 @@
   * 
@@ -40,7 +40,7 @@ Index: src/main/java/org/apache/maven/shared/dependency/analyzer/DefaultProjectD
          {
 Index: pom.xml
 ===================================================================
---- pom.xml	(revision 942371)
+--- pom.xml	(revision 942535)
 +++ pom.xml	(working copy)
 @@ -30,7 +30,7 @@
    <groupId>org.apache.maven.shared</groupId>
