@@ -32,7 +32,9 @@
   <description>A ProjectDependencyAnalyzer that also considers runtime dependencies introduced by a project's Spring XML files</description>
   <name>Maven Spring Dependency Analyzer</name>
   <scm>
-    <developerConnection>git://github.com/toby1984/maven-dependency-analyzer-spring.git</developerConnection>
+    <connection>scm:git:http//github.com/toby1984/maven-dependency-analyzer-spring.git</connection>
+    <developerConnection>scm:git:http//github.com/toby1984/maven-dependency-analyzer-spring.git</developerConnection>
+    <url>http://github.com/toby1984/maven-dependency-analyzer-spring</url>
   </scm>
   <issueManagement>
     <system>GitHub Issue Management System</system>
