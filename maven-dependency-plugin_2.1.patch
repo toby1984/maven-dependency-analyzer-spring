@@ -44,7 +44,7 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
 -     * @required
 -     * @readonly
 +     * @parameter expression="${analyzer}" default-value="default"
-+     * @since 2.1.1
++     * @since 2.2
       */
 -    private ProjectDependencyAnalyzer analyzer;
 +    private String analyzer;
