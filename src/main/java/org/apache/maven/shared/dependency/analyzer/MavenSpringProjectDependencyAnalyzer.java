@@ -20,24 +20,28 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.analyzer.spring.ArtifactForClassResolver;
 import org.apache.maven.shared.dependency.analyzer.spring.DefaultSpringXmlFileLocator;
 import org.apache.maven.shared.dependency.analyzer.spring.DefaultSpringXmlParser;
 import org.apache.maven.shared.dependency.analyzer.spring.SpringProjectDependencyAnalyzer;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * @author tobias.gierke@code-sourcery.de
  * @plexus.component role="org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer" role-hint="spring"
  */
 public class MavenSpringProjectDependencyAnalyzer
-    extends DefaultProjectDependencyAnalyzer
-    implements LoggingAware
+    extends DefaultProjectDependencyAnalyzer implements Contextualizable
 {
-
-    private Log log;
-
+    private Logger log;
+    
     @SuppressWarnings( "unchecked" )
     @Override
     protected Set<String> buildDependencyClasses( MavenProject project, final Map artifactClassMap )
@@ -87,9 +91,12 @@ public class MavenSpringProjectDependencyAnalyzer
         return result;
     }
 
-    public void setLog( Log log )
+    @Override
+    public void contextualize( Context context )
+        throws ContextException
     {
-        this.log = log;
+        final PlexusContainer container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY ); 
+        this.log = container.getLoggerManager().getLoggerForComponent( Mojo.ROLE );            
     }
 
 }

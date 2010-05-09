@@ -32,12 +32,13 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
+import org.codehaus.plexus.logging.Logger;
 
 public class DefaultSpringXmlFileLocator
     implements SpringXmlFileLocator
 {
 
-    private Log log;
+    private Logger log;
 
     @SuppressWarnings( "unchecked" )
     @Override
@@ -51,7 +52,7 @@ public class DefaultSpringXmlFileLocator
         return result;
     }
 
-    public void setLog( Log log )
+    public void setLog( Logger log )
     {
         this.log = log;
     }

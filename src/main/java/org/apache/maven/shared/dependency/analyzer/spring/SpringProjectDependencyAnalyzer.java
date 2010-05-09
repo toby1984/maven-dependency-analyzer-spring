@@ -20,10 +20,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Set;
 
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.analyzer.LoggingAware;
 import org.apache.maven.shared.dependency.analyzer.spring.SpringXmlParser.NoSpringXmlException;
+import org.codehaus.plexus.logging.Logger;
 
 /**
  * Retrieves dependency information using Spring XML configuration 
@@ -37,7 +36,6 @@ import org.apache.maven.shared.dependency.analyzer.spring.SpringXmlParser.NoSpri
  * @see DefaultSpringXmlBeanVisitor
  */
 public class SpringProjectDependencyAnalyzer
-    implements LoggingAware
 {
     private SpringXmlParser fileParser;
 
@@ -45,13 +43,13 @@ public class SpringProjectDependencyAnalyzer
 
     private ArtifactForClassResolver resolver;
 
-    private Log log;
+    private Logger log;
 
     public SpringProjectDependencyAnalyzer()
     {
     }
 
-    public void setLog( Log log )
+    public void setLog( Logger log )
     {
         this.log = log;
     }
