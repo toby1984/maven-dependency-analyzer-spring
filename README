@@ -85,4 +85,5 @@ XML snippet:
 When running 'mvn dependency:analyze' on a project
 with Spring XMLs , you should see the following output:
 
-[INFO] Scanned Spring XML < ... Spring XML file ...> 
+[INFO] Including dependencies from Spring XMLs in analysis
+[INFO] Scanned Spring XML < ... Spring XML file ... > 

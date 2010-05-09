@@ -38,10 +38,11 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * @plexus.component role="org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer" role-hint="spring"
  */
 public class MavenSpringProjectDependencyAnalyzer
-    extends DefaultProjectDependencyAnalyzer implements Contextualizable
+    extends DefaultProjectDependencyAnalyzer
+    implements Contextualizable
 {
     private Logger log;
-    
+
     @SuppressWarnings( "unchecked" )
     @Override
     protected Set<String> buildDependencyClasses( MavenProject project, final Map artifactClassMap )
@@ -49,6 +50,11 @@ public class MavenSpringProjectDependencyAnalyzer
     {
         final Map<Artifact, Set<String>> typedMap = artifactClassMap;
         final Set<String> result = super.buildDependencyClasses( project, typedMap );
+
+        if ( log != null && log.isInfoEnabled() )
+        {
+            log.info( "Including dependencies from Spring XMLs in analysis" );
+        }
 
         final ArtifactForClassResolver resolver = new ArtifactForClassResolver()
         {
@@ -95,8 +101,8 @@ public class MavenSpringProjectDependencyAnalyzer
     public void contextualize( Context context )
         throws ContextException
     {
-        final PlexusContainer container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY ); 
-        this.log = container.getLoggerManager().getLoggerForComponent( Mojo.ROLE );            
+        final PlexusContainer container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+        this.log = container.getLoggerManager().getLoggerForComponent( Mojo.ROLE );
     }
 
 }
