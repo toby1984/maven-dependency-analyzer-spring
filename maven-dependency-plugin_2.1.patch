@@ -54,7 +54,7 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
          }
      }
  
-+    protected ProjectDependencyAnalyzer createAnalyzer()
++    protected ProjectDependencyAnalyzer createProjectDependencyAnalyzer()
 +        throws MojoExecutionException
 +    {
 +
@@ -88,7 +88,7 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
          try
          {
 -            analysis = analyzer.analyze( project );
-+            analysis = createAnalyzer().analyze( project );
++            analysis = createProjectDependencyAnalyzer().analyze( project );
          }
          catch ( ProjectDependencyAnalyzerException exception )
          {
