@@ -15,29 +15,25 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
  import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
  
  /**
-@@ -44,11 +50,20 @@
-  * @since 2.0-alpha-5
+@@ -45,10 +51,17 @@
   */
  public abstract class AbstractAnalyzeMojo
--    extends AbstractMojo
-+    extends AbstractMojo implements Contextualizable
+     extends AbstractMojo
++    implements Contextualizable
  {
      // fields -----------------------------------------------------------------
  
      /**
-+	 * The plexus context to
-+	 * look-up the right 
-+	 * {@link ProjectDependencyAnalyzer}
-+	 * implementation depending
-+	 * on the mojo configuration. 
-+	 */
++     * The plexus context to look-up the right {@link ProjectDependencyAnalyzer} implementation depending on the mojo
++     * configuration.
++     */
 +    private Context context;
 +
 +    /**
       * The Maven project to analyze.
       * 
       * @parameter expression="${project}"
-@@ -58,13 +73,11 @@
+@@ -58,13 +71,11 @@
      private MavenProject project;
  
      /**
@@ -54,31 +50,40 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
  
      /**
       * Whether to fail the build if a dependency warning is found.
-@@ -157,19 +170,37 @@
+@@ -157,6 +168,32 @@
          }
      }
  
-+    protected ProjectDependencyAnalyzer createAnalyzer() throws ContextException, ComponentLookupException {
-+    	
-+    	final String role = ProjectDependencyAnalyzer.ROLE;
-+    	final String roleHint = analyzer;
-+    	
-+    	final PlexusContainer container = (PlexusContainer) 
-+    		context.get( PlexusConstants.PLEXUS_KEY );
-+    	
-+		return (ProjectDependencyAnalyzer) container.lookup( role  , roleHint );
++    protected ProjectDependencyAnalyzer createAnalyzer()
++        throws MojoExecutionException
++    {
++
++        final String role = ProjectDependencyAnalyzer.ROLE;
++        final String roleHint = analyzer;
++
++        try
++        {
++            final PlexusContainer container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
++
++            return (ProjectDependencyAnalyzer) container.lookup( role, roleHint );
++        }
++        catch ( Exception exception )
++        {
++            throw new MojoExecutionException( "Failed to instantiate " + "ProjectDependencyAnalyser with role " + role
++                + " / role-hint " + roleHint,exception );
++        }
 +    }
-+    
-+    public void contextualize( Context context ) throws ContextException {
-+    	this.context = context;
++
++    public void contextualize( Context context )
++        throws ContextException
++    {
++        this.context = context;
 +    }
-+    
++
      // private methods --------------------------------------------------------
  
      private boolean checkDependencies()
-         throws MojoExecutionException
-     {
-+    	
+@@ -165,7 +202,7 @@
          ProjectDependencyAnalysis analysis;
          try
          {
@@ -87,12 +92,6 @@ Index: src/main/java/org/apache/maven/plugin/dependency/AbstractAnalyzeMojo.java
          }
          catch ( ProjectDependencyAnalyzerException exception )
          {
-             throw new MojoExecutionException( "Cannot analyze dependencies", exception );
-+        } catch(Exception exception) {
-+            throw new MojoExecutionException( "Internal error", exception );
-         }
- 
-         Set usedDeclared = analysis.getUsedDeclaredArtifacts();
 Index: pom.xml
 ===================================================================
 --- pom.xml	(revision 942469)
