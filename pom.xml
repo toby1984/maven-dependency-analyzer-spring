@@ -44,14 +44,14 @@
     <repository>
       <id>codesourcery</id>
       <name>codesourcery repo</name>
-      <url>https://www.code-sourcery.de:8443/artifactory</url>
+      <url>https://www.code-sourcery.de:8443/artifactory/repo</url>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
       <id>codesourcery</id>
       <name>codesourcery repo</name>
-      <url>https://www.code-sourcery.de:8443/artifactory</url>
+      <url>https://www.code-sourcery.de:8443/artifactory/repo</url>
     </pluginRepository>
   </pluginRepositories>
   <build>

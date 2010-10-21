@@ -1,5 +1,7 @@
 2010-05-09
 
+Last modified: 2010-10-20
+
 Introduction
 ------------
 
@@ -22,6 +24,14 @@ Maven 2.2.1+ (older versions will probably work as well)
 
 Compiling and installing
 ------------------------
+
+*UPDATE* : For ease of use I wrapped up a .tgz containing the patched maven-dependency-analyzer / maven-dependency-plugin 
+and maven-dependency-analyzer-spring artifacts. Just extract binaries/patched_plugins_repo.tgz into your 
+Maven repository folder (~/.m2/repository on Unix machines) and you should be good to go.
+
+If you want to do the patching & compiling yourself (which I recommend since that way you can alter the pom files
+and assign your own custom version numbers to the patched plugin/components to avoid mixups etc. ... 
+relying on SNAPSHOT versions is generally a bad idea).
 
 To actually get the maven-dependency-plugin to support this extension:
 
@@ -51,6 +61,8 @@ most likely need some more work (if it gets accepted at all).
 
 Usage
 -----
+
+*UPDATE*: The maven-dependeny-plugin (or more likely the (patched) 2.1-SNAPSHOT one) currently DOES NOT WORK with Maven3 (some Guice injection error shows up).
 
 The patched & installed maven-dependency-plugin currently has version 2.1-SNAPSHOT.
 
