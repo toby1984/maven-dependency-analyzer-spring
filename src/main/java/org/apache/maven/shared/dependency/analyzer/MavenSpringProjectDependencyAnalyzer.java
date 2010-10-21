@@ -20,18 +20,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.analyzer.spring.ArtifactForClassResolver;
 import org.apache.maven.shared.dependency.analyzer.spring.DefaultSpringXmlFileLocator;
 import org.apache.maven.shared.dependency.analyzer.spring.DefaultSpringXmlParser;
 import org.apache.maven.shared.dependency.analyzer.spring.SpringProjectDependencyAnalyzer;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * @author tobias.gierke@code-sourcery.de
@@ -39,7 +34,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  */
 public class MavenSpringProjectDependencyAnalyzer
     extends DefaultProjectDependencyAnalyzer
-    implements Contextualizable
+    implements LogEnabled
 {
     private Logger log;
 
@@ -98,11 +93,9 @@ public class MavenSpringProjectDependencyAnalyzer
     }
 
     @Override
-    public void contextualize( Context context )
-        throws ContextException
+    public void enableLogging( Logger logger )
     {
-        final PlexusContainer container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
-        this.log = container.getLoggerManager().getLoggerForComponent( Mojo.ROLE );
+        this.log = logger;
     }
 
 }
