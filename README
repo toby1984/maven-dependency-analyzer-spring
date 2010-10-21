@@ -62,8 +62,6 @@ most likely need some more work (if it gets accepted at all).
 Usage
 -----
 
-*UPDATE*: The maven-dependeny-plugin (or more likely the (patched) 2.1-SNAPSHOT one) currently DOES NOT WORK with Maven3 (some Guice injection error shows up).
-
 The patched & installed maven-dependency-plugin currently has version 2.1-SNAPSHOT.
 
 To enable scanning Spring XMLs for dependencies you need to add 
